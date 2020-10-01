@@ -6,12 +6,13 @@ import bodyParser from 'body-parser'
 import sockjs from 'sockjs'
 import { renderToStaticNodeStream } from 'react-dom/server'
 import React from 'react'
+import shortid from 'shortid'
 
 import cookieParser from 'cookie-parser'
 import config from './config'
 import Html from '../client/html'
 
-const { readFile, stat } = require('fs').promises;
+const { readFile, stat, writeFile, readdir } = require('fs').promises
 
 const Root = () => ''
 
@@ -30,7 +31,9 @@ try {
 }
 
 const isFileExists = async (category) => {
-  const result = await stat(`${__dirname}/tasks/${category}.json`).then(() => true).catch(() => false)
+  const result = await stat(`${__dirname}/tasks/${category}.json`)
+    .then(() => true)
+    .catch(() => false)
   return result
 }
 
@@ -108,6 +111,86 @@ server.get('/api/v1/tasks/:category/:timestamp', async (req, res) => {
   if (!data) res.json({ status: 'error' })
   res.json(parseContent(filterData(data, timestamp)))
   return true
+})
+
+server.get('/api/v1/categories', async (req, res) => {
+  let filesList = await readdir(`${__dirname}/tasks/`, { codepage: 'utf8' })
+  const regExp = /\w{1,}/
+  filesList = filesList.map((file) => file.match(regExp)[0])
+  res.json(filesList)
+})
+
+server.post('/api/v1/tasks/:category', async (req, res) => {
+  const { category } = req.params
+  const data = {
+    taskId: shortid.generate(),
+    title: req.body.title,
+    status: 'new',
+    _isDeleted: false,
+    _createdAt: +new Date(),
+    _deletedAt: null
+  }
+  const fileExists = await isFileExists(category)
+  if (!fileExists) {
+    await writeFile(`${__dirname}/tasks/${category}.json`, JSON.stringify([data]), {
+      codepage: 'utf8'
+    })
+    res.json({ status: 'success' })
+    return
+  }
+  const oldData = await getData(category)
+  await writeFile(`${__dirname}/tasks/${category}.json`, JSON.stringify([...oldData, data]), {
+    codepage: 'utf8'
+  })
+  res.json({ status: 'success' })
+})
+
+const checkExistance = (oldData, id) => {
+  if (!oldData) {
+    return -1
+  }
+  const itemIndex = oldData.findIndex((item) => item.taskId === id)
+  if (itemIndex === -1) {
+    return -1
+  }
+  return itemIndex
+}
+
+server.patch('/api/v1/tasks/:category/:id', async (req, res) => {
+  const { category, id } = req.params
+  const oldData = await getData(category)
+  const itemIndex = checkExistance(oldData, id)
+  if (itemIndex === -1) {
+    res.json({ status: 'error', message: 'category not found' })
+    return
+  }
+  const statusList = ['done', 'new', 'in progress', 'blocked']
+  if (typeof req.body.status !== 'undefined') {
+    if (statusList.findIndex((item) => item === req.body.status) === -1) {
+      res.json({ status: 'error', message: 'incorrect status' })
+      return
+    }
+  }
+  oldData[itemIndex] = { ...oldData[itemIndex], ...req.body }
+  await writeFile(`${__dirname}/tasks/${category}.json`, JSON.stringify(oldData), {
+    codepage: 'utf8'
+  })
+  res.json({ status: 'success' })
+})
+
+server.delete('/api/v1/tasks/:category/:id', async (req, res) => {
+  const { category, id } = req.params
+  const oldData = await getData(category)
+  const itemIndex = checkExistance(oldData, id)
+  if (itemIndex === -1) {
+    res.json({ status: 'error', message: 'category not found' })
+    return
+  }
+  oldData[itemIndex] = { ...oldData[itemIndex], _isDeleted: true }
+  await writeFile(`${__dirname}/tasks/${category}.json`, JSON.stringify(oldData), {
+    codepage: 'utf8'
+  })
+  res.json({ status: 'success' })
 })
 
 server.use('/api/', (req, res) => {
