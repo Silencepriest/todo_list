@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 
 import AddNewTask from './add-new-task'
 
-const URL = 'http://localhost:8090' // for localhost use http://localhost:8090
+const URL = '' // for localhost use http://localhost:8090
 
 async function sendRequest(payload) {
   switch (payload.task) {
