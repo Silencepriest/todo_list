@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Edit } from '@material-ui/icons'
 
 function NameComponent(props) {
   const [value, setValue] = useState(props.title)
@@ -22,7 +23,7 @@ function NameComponent(props) {
               changeEditMode(false)
             }}
           >
-            <span className="material-icons text-green-500">edit</span>
+            <Edit className=" text-green-500" />
           </button>
         </>
       ) : (
@@ -35,7 +36,7 @@ function NameComponent(props) {
               changeEditMode(true)
             }}
           >
-            <span className="material-icons text-green-500">edit</span>
+            <Edit className=" text-green-500" />
           </button>
         </>
       )}
