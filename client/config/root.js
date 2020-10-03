@@ -11,6 +11,7 @@ import Home from '../components/home'
 import DummyView from '../components/dummy-view'
 import NotFound from '../components/404'
 import ShowCategory from '../components/show-category'
+import CategoryList from '../components/categoryList'
 
 import Startup from './startup'
 
@@ -73,7 +74,7 @@ const RootComponent = (props) => {
       <RouterSelector history={history} location={props.location} context={props.context}>
         <Startup>
           <Switch>
-            <Route exact path="/" component={() => <DummyView />} />
+            <Route exact path="/" component={() => <CategoryList />} />
             <Route exact path="/dashboard" component={() => <Home />} />
             <Route exact path="/:categoryName">
               <ShowCategory />

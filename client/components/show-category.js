@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
+import { Done, Work, Block, LockOpen, DeleteForever } from '@material-ui/icons'
 
 import AddNewTask from './add-new-task'
+import NameComponent from './name-component'
+import FilterMenu from './filter-menu'
 
 const URL = '' // for localhost use http://localhost:8090
 
@@ -59,7 +62,7 @@ function renderButtons(status, category, id, version, setVersion) {
             setVersion(version + 1)
           }}
         >
-          <span className="material-icons text-orange-900">work</span>
+          <Work className="text-orange-900" />
         </button>
       )
     }
@@ -78,7 +81,7 @@ function renderButtons(status, category, id, version, setVersion) {
               setVersion(version + 1)
             }}
           >
-            <span className="material-icons text-green-900">done</span>
+            <Done className="text-green-900" />
           </button>
           <button
             type="submit"
@@ -92,7 +95,7 @@ function renderButtons(status, category, id, version, setVersion) {
               setVersion(version + 1)
             }}
           >
-            <span className="material-icons text-red-700">block</span>
+            <Block className="text-red-700" />
           </button>
         </>
       )
@@ -111,7 +114,7 @@ function renderButtons(status, category, id, version, setVersion) {
             setVersion(version + 1)
           }}
         >
-          <span className="material-icons text-green-900">lock_open</span>
+          <LockOpen className="text-green-900" />
         </button>
       )
     }
@@ -141,11 +144,20 @@ const ShowCategory = () => {
 
   return (
     <div className="h-screen bg-green-400">
-      <div className="bg-green-400">
-        <h1 className="text-center text-3xl text-gray-700 pb-2">
+      <div className="bg-green-400 flex">
+        <Link to="/" className="justify-self-start m-2">
+          <button
+            className="bg-green-800 p-2 rounded-lg hover:bg-green-500 transition-all duration-500"
+            type="submit"
+          >
+            Home
+          </button>
+        </Link>
+        <h1 className="text-center text-3xl text-gray-700 pb-2 mx-auto">
           Now browsing category: {categoryName}
         </h1>
       </div>
+      <FilterMenu categoryName={categoryName} timeToDisplay={timeToDisplay} />
       <AddNewTask
         sendRequest={sendRequest}
         version={version}
@@ -157,7 +169,14 @@ const ShowCategory = () => {
           itemsList.map((item) => {
             return (
               <div key={item.taskId} className="m-4 w-1/5 p-2 rounded-lg bg-yellow-500">
-                <p>Name: {item.title}</p>
+                <NameComponent
+                  title={item.title}
+                  sendRequest={sendRequest}
+                  category={categoryName}
+                  id={item.taskId}
+                  version={version}
+                  setVersion={setVersion}
+                />
                 <p>Status: {item.status}</p>
                 {renderButtons(item.status, categoryName, item.taskId, version, setVersion)}
                 <button
@@ -172,7 +191,7 @@ const ShowCategory = () => {
                     setVersion(version + 1)
                   }}
                 >
-                  <span className="material-icons">delete_forever</span>
+                  <DeleteForever />
                 </button>
               </div>
             )

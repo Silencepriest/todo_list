@@ -8,10 +8,10 @@ const AddNewTask = (props) => {
         className="mr-2 p-2 rounded-lg"
         type="text"
         value={value}
-        onInput={(e) => setValue(e.target.value)}
+        onChange={(e) => setValue(e.target.value)}
       />
       <button
-        className="rounded-lg p-2 bg-green-800"
+        className="rounded-lg p-2 bg-green-800 hover:bg-green-500 transition-all duration-500"
         type="submit"
         onClick={async () => {
           await props.sendRequest({
