@@ -25,8 +25,10 @@ try {
   //   Root = (props) => <items.Root {...props} />
   //   console.log(JSON.stringify(items.Root))
   // })()
+  // eslint-disable-next-line no-console
   console.log(Root)
 } catch (ex) {
+  // eslint-disable-next-line no-console
   console.log(' run yarn build:prod to enable ssr')
 }
 
@@ -77,7 +79,7 @@ const filterData = (content, how) => {
       return content.filter((item) => item._createdAt + MONTH > now)
     }
     default: {
-      return { status: 'error' }
+      return false
     }
   }
 }
@@ -108,8 +110,16 @@ server.get('/api/v1/tasks/:category', async (req, res) => {
 server.get('/api/v1/tasks/:category/:timestamp', async (req, res) => {
   const { category, timestamp } = req.params
   const data = await getData(category)
-  if (!data) res.json({ status: 'error' })
-  res.json(parseContent(filterData(data, timestamp)))
+  if (!data) {
+    res.json({ status: 'error' })
+    return false
+  }
+  const filteredData = filterData(data, timestamp)
+  if (!filteredData) {
+    res.json({ status: 'error' })
+    return false
+  }
+  res.json(parseContent(filteredData))
   return true
 })
 
@@ -240,4 +250,5 @@ if (config.isSocketsEnabled) {
   })
   echo.installHandlers(app, { prefix: '/ws' })
 }
+// eslint-disable-next-line no-console
 console.log(`Serving at http://localhost:${port}`)

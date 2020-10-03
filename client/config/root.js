@@ -10,6 +10,7 @@ import store, { history } from '../redux'
 import Home from '../components/home'
 import DummyView from '../components/dummy-view'
 import NotFound from '../components/404'
+import ShowCategory from '../components/show-category'
 
 import Startup from './startup'
 
@@ -74,6 +75,12 @@ const RootComponent = (props) => {
           <Switch>
             <Route exact path="/" component={() => <DummyView />} />
             <Route exact path="/dashboard" component={() => <Home />} />
+            <Route exact path="/:categoryName">
+              <ShowCategory />
+            </Route>
+            <Route exact path="/:categoryName/:timeToDisplay">
+              <ShowCategory />
+            </Route>
             <PrivateRoute exact path="/hidden-route" component={() => <DummyView />} />
             <Route component={() => <NotFound />} />
           </Switch>
