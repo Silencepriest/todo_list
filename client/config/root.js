@@ -2,16 +2,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'connected-react-router'
-import { Switch, Route, Redirect, StaticRouter } from 'react-router-dom'
-
-import store, { history } from '../redux'
+import { Switch, Route, Redirect, BrowserRouter } from 'react-router-dom'
 
 import Home from '../components/home'
 import DummyView from '../components/dummy-view'
 import NotFound from '../components/404'
 import ShowCategory from '../components/show-category'
 import CategoryList from '../components/categoryList'
+import store from '../redux'
 
 import Startup from './startup'
 
@@ -65,13 +63,10 @@ PrivateRoute.propTypes = types
 PrivateRoute.defaultProps = defaults
 OnlyAnonymousRoute.defaultProps = defaults
 
-const RouterSelector = (props) =>
-  typeof window !== 'undefined' ? <ConnectedRouter {...props} /> : <StaticRouter {...props} />
-
-const RootComponent = (props) => {
+const RootComponent = () => {
   return (
     <Provider store={store}>
-      <RouterSelector history={history} location={props.location} context={props.context}>
+      <BrowserRouter>
         <Startup>
           <Switch>
             <Route exact path="/" component={() => <CategoryList />} />
@@ -86,7 +81,7 @@ const RootComponent = (props) => {
             <Route component={() => <NotFound />} />
           </Switch>
         </Startup>
-      </RouterSelector>
+      </BrowserRouter>
     </Provider>
   )
 }

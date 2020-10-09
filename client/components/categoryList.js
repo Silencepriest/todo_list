@@ -4,12 +4,10 @@ import axios from 'axios'
 
 import OpenNewCategory from './open-new-category'
 
-const URL = '' // for localhost use http://localhost:8090
-
 function CategoryList() {
   const [list, setList] = useState([])
   useEffect(() => {
-    axios(`${URL}/api/v1/categories`).then(({ data }) => {
+    axios(`/api/v1/categories`).then(({ data }) => {
       setList(data)
     })
   }, [])
