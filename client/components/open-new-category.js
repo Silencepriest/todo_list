@@ -3,13 +3,18 @@ import { Link } from 'react-router-dom'
 
 const OpenNewCategory = () => {
   const [value, setValue] = useState('')
+  // eslint-disable-next-line no-unused-vars
+  const onTextInput = (e) => {
+    const regExp = /^\w{1,}$/
+    if (regExp.test(e)) setValue(e)
+  }
   return (
     <div className="m-4 flex justify-center bg-green-400">
       <input
         className="mr-2 p-2 rounded-lg h-10"
         type="text"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => onTextInput(e.target.value)}
       />
       <Link to={`/${value}`}>
         <button

@@ -25,7 +25,8 @@
         "build:ssr": "cross-env NODE_ENV=production webpack --config webpack.ssr.config.js --progress --profile --colors",
         "heroku-postbuild": "yarn run build:prod",
         "storybook": "start-storybook -p 6006",
-        "build-storybook": "build-storybook"
+        "build-storybook": "build-storybook",
+        "debug": "nodemon --inspect start.js"
     },
     "author": "",
     "license": "MIT",
