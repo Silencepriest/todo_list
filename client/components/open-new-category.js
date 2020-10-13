@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom'
 
 const OpenNewCategory = () => {
   const [value, setValue] = useState('')
-  // eslint-disable-next-line no-unused-vars
   const onTextInput = (e) => {
     const regExp = /^\w{1,}$/
-    if (regExp.test(e)) setValue(e)
+    if (regExp.test(e) || e === '') setValue(e)
   }
   return (
     <div className="m-4 flex justify-center bg-green-400">
